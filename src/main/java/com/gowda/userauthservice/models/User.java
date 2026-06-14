@@ -1,5 +1,6 @@
 package com.gowda.userauthservice.models;
 
+import com.gowda.userauthservice.dtos.UserDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 
@@ -52,5 +53,14 @@ public class User extends BaseModel {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+    public UserDto toUserDto(){
+        UserDto userDto = new UserDto();
+        userDto.setId(this.getId());
+        userDto.setName(this.getName());
+        userDto.setEmail(this.getEmail());
+       // userDto.setPhone(this.getPhone());
+        userDto.setRoles(this.getRoles());
+        return userDto;
     }
 }
