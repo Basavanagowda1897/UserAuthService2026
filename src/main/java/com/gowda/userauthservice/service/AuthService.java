@@ -7,6 +7,7 @@ import com.gowda.userauthservice.models.User;
 import com.gowda.userauthservice.repositories.RoleRepo;
 import com.gowda.userauthservice.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class AuthService implements IAuthService{
     @Autowired
     private RoleRepo roleRepo;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public User singUp(String name, String email, String password) {
         Optional<User> OptionalUser = userRepo.findByEmail(email);
@@ -32,7 +35,8 @@ public class AuthService implements IAuthService{
         User user = new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        //user.setPassword(password);
         user.setCreatedAt(System.currentTimeMillis());
         user.setUpdatedAt(System.currentTimeMillis());
         user.setState(State.ACTIVE);
@@ -65,7 +69,7 @@ public class AuthService implements IAuthService{
 
         User user = OptionalUser.get();
 
-        if(!user.getPassword().equals(password)) {
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
             throw new IncorrectPasswordException("Invalid password");
         }
 
